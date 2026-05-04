@@ -131,10 +131,13 @@ const heroSlides = [
 				}
 
 				// 2. Hero Slider Logic
+				const heroSection = document.querySelector(".hero-section");
 				const slides = document.querySelectorAll(".hero-slide");
 				const nextHero = document.querySelector(".hero-controls .next");
 				const prevHero = document.querySelector(".hero-controls .prev");
 				let heroIdx = 0;
+				let touchStartX = 0;
+				let touchEndX = 0;
 
 				function updateHero(newIdx: number) {
 					slides[heroIdx].classList.remove("active");
@@ -149,6 +152,25 @@ const heroSlides = [
 					updateHero(heroIdx - 1),
 				);
 
+				// Hero Touch Swipe
+				heroSection?.addEventListener("touchstart", (e: any) => {
+					touchStartX = e.changedTouches[0].screenX;
+				}, { passive: true });
+
+				heroSection?.addEventListener("touchend", (e: any) => {
+					touchEndX = e.changedTouches[0].screenX;
+					handleHeroSwipe();
+				}, { passive: true });
+
+				function handleHeroSwipe() {
+					const swipeThreshold = 50;
+					if (touchStartX - touchEndX > swipeThreshold) {
+						updateHero(heroIdx + 1); // Swipe Left -> Next
+					} else if (touchEndX - touchStartX > swipeThreshold) {
+						updateHero(heroIdx - 1); // Swipe Right -> Prev
+					}
+				}
+
 				// 3. Collection Infinite Loop Slider + Auto-Flow
 				const track = document.querySelector(".collection-track") as HTMLElement;
 				const progress = document.querySelector(".progress-fill") as HTMLElement;
@@ -162,6 +184,7 @@ const heroSlides = [
 
 					let isAutoPlaying = true;
 					let animationFrame: number;
+					let interactionTimeout: any;
 
 					const autoScroll = () => {
 						if (isAutoPlaying) {
@@ -190,41 +213,73 @@ const heroSlides = [
 					// Interaction Control
 					track.addEventListener("mouseenter", () => isAutoPlaying = false);
 					track.addEventListener("mouseleave", () => isAutoPlaying = true);
-					track.addEventListener("touchstart", () => isAutoPlaying = false);
-					track.addEventListener("touchend", () => isAutoPlaying = true);
+					
+					track.addEventListener("touchstart", () => {
+						isAutoPlaying = false;
+						clearTimeout(interactionTimeout);
+					}, { passive: true });
+
+					track.addEventListener("touchend", () => {
+						interactionTimeout = setTimeout(() => {
+							isAutoPlaying = true;
+						}, 3000);
+					}, { passive: true });
 
 					nextCol?.addEventListener("click", () => {
 						isAutoPlaying = false;
 						track.scrollBy({ left: 400, behavior: "smooth" });
-						setTimeout(() => isAutoPlaying = true, 3000);
+						clearTimeout(interactionTimeout);
+						interactionTimeout = setTimeout(() => isAutoPlaying = true, 3000);
 					});
 					prevCol?.addEventListener("click", () => {
 						isAutoPlaying = false;
 						track.scrollBy({ left: -400, behavior: "smooth" });
-						setTimeout(() => isAutoPlaying = true, 3000);
+						clearTimeout(interactionTimeout);
+						interactionTimeout = setTimeout(() => isAutoPlaying = true, 3000);
 					});
 
 					autoScroll();
 				}
 
-				// 4. Machinery Gallery Dots
+				// 4. Machinery Gallery Slider
 				const machineDots = document.querySelectorAll(".v-dots span");
-				machineDots.forEach((dot, i) => {
-					dot.addEventListener("click", () => {
-						machineDots.forEach((d) =>
-							d.classList.remove("active"),
-						);
-						dot.classList.add("active");
-						// Simple feedback for demo
-						const img = document.querySelector(
-							".machinery-visual img",
-						) as HTMLElement;
-						if (img) img.style.opacity = "0.5";
+				const machineryVisual = document.querySelector(".machinery-visual");
+				let machineIdx = 0;
+				let machineStartX = 0;
+				let machineEndX = 0;
+
+				function updateMachine(newIdx: number) {
+					machineDots.forEach((d) => d.classList.remove("active"));
+					machineIdx = (newIdx + machineDots.length) % machineDots.length;
+					machineDots[machineIdx].classList.add("active");
+					
+					const img = document.querySelector(".machinery-visual img") as HTMLElement;
+					if (img) {
+						img.style.opacity = "0.5";
 						setTimeout(() => {
-							if (img) img.style.opacity = "1";
+							img.style.opacity = "1";
+							// In a real app, you'd change the src here based on the index
 						}, 200);
-					});
+					}
+				}
+
+				machineDots.forEach((dot, i) => {
+					dot.addEventListener("click", () => updateMachine(i));
 				});
+
+				machineryVisual?.addEventListener("touchstart", (e: any) => {
+					machineStartX = e.changedTouches[0].screenX;
+				}, { passive: true });
+
+				machineryVisual?.addEventListener("touchend", (e: any) => {
+					machineEndX = e.changedTouches[0].screenX;
+					const threshold = 50;
+					if (machineStartX - machineEndX > threshold) {
+						updateMachine(machineIdx + 1);
+					} else if (machineEndX - machineStartX > threshold) {
+						updateMachine(machineIdx - 1);
+					}
+				}, { passive: true });
 
 				// 5. Mobile Menu Toggle
 				const menuToggle = document.getElementById("menuToggle");
