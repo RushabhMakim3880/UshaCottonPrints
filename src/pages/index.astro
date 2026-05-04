@@ -1191,11 +1191,30 @@ const heroSlides = [
 					content: "";
 					position: absolute;
 					inset: 0;
-					background: linear-gradient(to right, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
-					z-index: 0;
+					background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%);
+					z-index: 1;
 				}
 				.hero-inner {
 					z-index: 5;
+					position: relative;
+				}
+				.hero-section h1 {
+					font-size: 36px !important;
+					line-height: 1.1 !important;
+					color: var(--color-white) !important;
+					text-shadow: 2px 2px 15px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5) !important;
+					margin-bottom: 10px !important;
+				}
+				.sub-heading {
+					font-size: 18px !important;
+					color: var(--color-gold) !important;
+					text-shadow: 1px 1px 10px rgba(0,0,0,0.8) !important;
+					font-weight: 600 !important;
+				}
+				.hero-divider {
+					width: 60px;
+					background-color: var(--color-white) !important;
+					margin: 15px 0 !important;
 				}
 				.hero-controls {
 					display: none !important;
