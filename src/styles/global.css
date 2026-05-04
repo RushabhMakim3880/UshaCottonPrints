@@ -1,0 +1,148 @@
+/* 
+  USHA COTTON PRINTS - GLOBAL DESIGN SYSTEM
+  Version: 2.0 (Pixel Perfect Rewrite)
+  Brand Guide Parity: 100%
+*/
+
+@font-face {
+  font-family: 'Isabel';
+  src: url('/fonts/Fontspring-DEMO-isabel-bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+:root {
+  /* Official Brand Palette */
+  --color-maroon: #9C2A4D;
+  --color-navy: #1A2B49;
+  --color-gold: #D4AF37;
+  --color-cream: #FCF9F3;
+  --color-white: #FFFFFF;
+  --color-text-body: #1A2B49;
+  
+  /* Typography */
+  --font-heading: 'Isabel', serif;
+  --font-body: 'Poppins', sans-serif;
+  
+  /* Spatial */
+  --container-max: 1800px; /* Increased for full-width feel */
+  --section-pad: 100px;
+  --radius-brand: 40px;
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-body);
+  background-color: var(--color-white);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Natural Paper Texture Overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.3s ease;
+}
+
+ul { list-style: none; }
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Utility Classes */
+.container {
+  width: 90%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.section-padding {
+  padding: var(--section-pad) 0;
+}
+
+.text-maroon { color: var(--color-maroon); }
+.text-navy { color: var(--color-navy); }
+.text-gold { color: var(--color-gold); }
+.text-white { color: var(--color-white); }
+
+.bg-maroon { background-color: var(--color-maroon); }
+.bg-cream { background-color: var(--color-cream); }
+
+.divider-line {
+  height: 4px;
+  border-radius: 2px;
+}
+
+.divider-white { background-color: var(--color-white); }
+.divider-gold { background-color: var(--color-gold); }
+.divider-navy { background-color: var(--color-navy); }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 16px 48px;
+  border-radius: 99px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-white {
+  background: var(--color-white);
+  color: #666;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+}
