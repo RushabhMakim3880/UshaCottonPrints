@@ -27,7 +27,7 @@ const heroSlides = [
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<title>USHA COTTON PRINTS | Traditional Trust Since 1994</title>
 	</head>
@@ -621,12 +621,10 @@ const heroSlides = [
 				height: 100vh;
 				position: relative;
 				overflow: hidden;
-				width: 100vw;
 			}
-			.hero-slider {
-				height: 100%;
-				width: 100%;
-				position: relative;
+			.hero-slides {
+				position: absolute;
+				inset: 0;
 			}
 			.hero-slide {
 				position: absolute;
@@ -643,14 +641,15 @@ const heroSlides = [
 				opacity: 1;
 				z-index: 1;
 			}
-			.hero-slide img {
+			.hero-bg {
+				position: absolute;
+				inset: 0;
+				z-index: -1;
+			}
+			.hero-bg img {
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
-				position: absolute;
-				top: 0;
-				left: 0;
-				z-index: -1;
 			}
 			.hero-inner {
 				position: relative;
@@ -771,7 +770,8 @@ const heroSlides = [
 				width: 100%;
 			}
 			.progress-bar-v5 {
-				width: 764px;
+				width: 100%;
+				max-width: 764px;
 				height: 4px;
 				background: #e0e0e0;
 				border-radius: 10px;
@@ -915,12 +915,13 @@ const heroSlides = [
 				margin: 40px 0;
 			}
 			.swoosh-container {
-				width: 210%;
+				width: 100%;
 				max-width: 1000px;
 				margin: 0 auto;
+				overflow: hidden;
 			}
 			.swoosh-img {
-				width: 300%;
+				width: 100%;
 				height: auto;
 				display: block;
 				filter: saturate(1.2);
@@ -1060,15 +1061,15 @@ const heroSlides = [
 				text-align: left;
 			}
 
+			/* ===== TABLET (max 1024px) ===== */
 			@media (max-width: 1024px) {
 				.container {
 					width: 100% !important;
 					max-width: 100% !important;
 					padding: 0 20px !important;
-					margin: 0 auto !important;
 				}
 				.section-padding {
-					padding: 60px 0 !important;
+					padding: 60px 0;
 				}
 				.nav-links {
 					display: none !important;
@@ -1076,97 +1077,193 @@ const heroSlides = [
 				.mobile-menu-toggle {
 					display: flex !important;
 				}
+				.hero-controls {
+					padding: 0 15px;
+				}
 				.hero-section h1 {
-					font-size: 38px !important;
-					text-align: center !important;
-					line-height: 1.2 !important;
+					font-size: 42px;
 				}
-				.hero-text {
-					text-align: center !important;
-					max-width: 100% !important;
-					padding: 0 10px !important;
-					margin: 0 auto !important;
-				}
-				.hero-text .btn-v2 {
-					margin: 20px auto 0 !important;
-				}
-				.section-title {
-					font-size: 36px !important;
-					text-align: center !important;
-					width: 100% !important;
-					margin-bottom: 40px !important;
-				}
-				.excellence-grid, .machinery-grid, .journey-grid, .footer-flex {
+				.excellence-grid,
+				.machinery-grid,
+				.journey-grid {
 					grid-template-columns: 1fr !important;
 					gap: 40px !important;
-					text-align: center !important;
-				}
-				.excellence-content, .machinery-content, .journey-text-content {
-					text-align: center !important;
-					max-width: 100% !important;
-					margin: 0 auto !important;
-				}
-				.journey-heading {
-					font-size: 42px !important;
-				}
-				.journey-text-content .btn-v2, .journey-btn {
-					margin: 30px auto 0 !important;
 				}
 				.services-grid {
-					grid-template-columns: 1fr !important;
-					gap: 20px !important;
-					width: 100% !important;
+					grid-template-columns: 1fr 1fr;
+					gap: 20px;
 				}
-				.service-card, .machinery-card {
-					min-width: unset !important;
-					width: 100% !important;
+				.footer-flex {
+					grid-template-columns: 1fr 1fr !important;
+					gap: 40px !important;
+				}
+			}
+
+			/* ===== MOBILE (max 768px) ===== */
+			@media (max-width: 768px) {
+				/* --- Global --- */
+				.container {
+					padding: 0 16px !important;
+				}
+				.section-padding {
+					padding: 50px 0;
+				}
+
+				/* --- Hero --- */
+				.hero-section h1 {
+					font-size: 32px !important;
+					line-height: 1.2 !important;
+					text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+				}
+				.hero-text {
 					max-width: 100% !important;
-					text-align: center !important;
-					padding: 40px 20px !important;
+					padding: 0 16px !important;
 				}
-				.card-icon, .card-line {
-					margin-left: auto !important;
-					margin-right: auto !important;
+				.hero-divider {
+					width: 80px;
 				}
-				.footer-grid {
-					grid-template-columns: 1fr !important;
-					text-align: center !important;
-				}
-				.logo-footer {
-					margin: 0 auto !important;
-				}
-				.f-address p {
-					text-align: center !important;
-					justify-content: center !important;
-				}
-				.f-nav {
-					flex-direction: column !important;
-					gap: 20px !important;
-					align-items: center !important;
-				}
-				.f-socials {
-					justify-content: center !important;
-				}
-				.collection-track {
-					padding: 0 20px !important;
-				}
-				.collection-card {
-					min-width: 260px !important;
+				.sub-heading {
+					font-size: 16px !important;
+					text-shadow: 0 1px 10px rgba(0,0,0,0.3);
 				}
 				.hero-controls {
 					display: none !important;
 				}
-			}
 
-			@media (max-width: 768px) {
-				.hero-section h1 {
-					font-size: 32px !important;
-				}
+				/* --- Collection Slider --- */
 				.section-title {
 					font-size: 32px !important;
+					margin-bottom: 30px !important;
+				}
+				.collection-track {
+					padding: 0 16px !important;
+					gap: 16px !important;
+				}
+				.collection-card {
+					width: 220px !important;
+					min-width: 220px !important;
+				}
+				.collection-card img {
+					height: 300px !important;
+					border-radius: 24px !important;
+				}
+				.card-1, .card-2, .card-3, .card-4, .card-5 {
+					margin-top: 0 !important;
+				}
+				.collection-wrapper {
+					padding-bottom: 60px;
+				}
+				.slider-controls-v5 {
+					gap: 15px;
+					padding: 0 16px;
+				}
+				.arrow-circ {
+					width: 36px;
+					height: 36px;
+				}
+
+				/* --- Excellence --- */
+				.excellence-grid {
+					text-align: center;
+				}
+				.excellence-content h2 {
+					font-size: 32px !important;
+				}
+				.small-divider {
+					margin: 20px auto !important;
+				}
+				.exp-badge {
+					left: 10px !important;
+					bottom: -20px !important;
+					padding: 15px 20px !important;
+				}
+
+				/* --- Machinery --- */
+				.machinery-grid {
+					text-align: center;
+				}
+				.machinery-content h2 {
+					font-size: 32px !important;
+				}
+				.machinery-content .small-divider {
+					margin: 20px auto !important;
+				}
+
+				/* --- Journey --- */
+				.journey-grid {
+					padding: 60px 0 !important;
+					text-align: center;
 				}
 				.journey-heading {
 					font-size: 36px !important;
+				}
+				.journey-btn {
+					margin: 20px auto 0 !important;
+					display: inline-block;
+				}
+
+				/* --- Production Cards --- */
+				.callout-heading h2 {
+					font-size: 26px !important;
+				}
+				.services-grid {
+					grid-template-columns: 1fr !important;
+					gap: 16px !important;
+				}
+				.service-card {
+					padding: 30px 20px !important;
+					border-radius: 20px !important;
+					text-align: center;
+				}
+				.card-icon {
+					margin: 0 auto 20px !important;
+				}
+				.card-line {
+					margin: 0 auto 20px !important;
+				}
+				.card-title {
+					font-size: 20px !important;
+				}
+
+				/* --- Footer --- */
+				.footer-flex {
+					grid-template-columns: 1fr !important;
+					text-align: center;
+					gap: 30px !important;
+				}
+				.logo-footer {
+					margin: 0 auto;
+				}
+				.f-nav {
+					flex-direction: row;
+					justify-content: center;
+					gap: 40px;
+				}
+				.f-socials {
+					justify-content: center;
+				}
+				.f-address p {
+					text-align: center;
+				}
+			}
+
+			/* ===== SMALL MOBILE (max 480px) ===== */
+			@media (max-width: 480px) {
+				.hero-section h1 {
+					font-size: 28px !important;
+				}
+				.brand-logo {
+					width: 120px;
+				}
+				.section-title {
+					font-size: 28px !important;
+				}
+				.collection-card {
+					width: 180px !important;
+					min-width: 180px !important;
+				}
+				.collection-card img {
+					height: 250px !important;
 				}
 			}
 		</style>
