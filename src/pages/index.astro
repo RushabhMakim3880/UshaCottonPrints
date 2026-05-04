@@ -244,6 +244,12 @@ const heroSlides = [
 				// 4. Machinery Gallery Slider
 				const machineDots = document.querySelectorAll(".v-dots span");
 				const machineryVisual = document.querySelector(".machinery-visual");
+				const machineImg = document.getElementById("machineImg") as HTMLImageElement;
+				const machineImages = [
+					"/images/machinery.jpg",
+					"/images/machinery-2.jpg",
+					"/images/machinery-3.jpg"
+				];
 				let machineIdx = 0;
 				let machineStartX = 0;
 				let machineEndX = 0;
@@ -253,13 +259,12 @@ const heroSlides = [
 					machineIdx = (newIdx + machineDots.length) % machineDots.length;
 					machineDots[machineIdx].classList.add("active");
 					
-					const img = document.querySelector(".machinery-visual img") as HTMLElement;
-					if (img) {
-						img.style.opacity = "0.5";
+					if (machineImg) {
+						machineImg.style.opacity = "0";
 						setTimeout(() => {
-							img.style.opacity = "1";
-							// In a real app, you'd change the src here based on the index
-						}, 200);
+							machineImg.src = machineImages[machineIdx];
+							machineImg.style.opacity = "1";
+						}, 300);
 					}
 				}
 
@@ -391,6 +396,8 @@ const heroSlides = [
 							src="/images/machinery.jpg"
 							alt="Advanced Machinery"
 							class="rounded-img"
+							id="machineImg"
+							style="transition: opacity 0.3s ease;"
 						/>
 						<div class="v-dots">
 							<span class="active"></span>
