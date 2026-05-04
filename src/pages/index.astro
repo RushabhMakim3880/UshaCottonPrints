@@ -1177,6 +1177,19 @@ const heroSlides = [
 					font-size: 16px !important;
 					text-shadow: 0 1px 10px rgba(0,0,0,0.3);
 				}
+				.hero-bg img {
+					object-position: 80% center; /* Focus on the model/person on the right */
+				}
+				.hero-slide::after {
+					content: "";
+					position: absolute;
+					inset: 0;
+					background: linear-gradient(to right, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+					z-index: 0;
+				}
+				.hero-inner {
+					z-index: 5;
+				}
 				.hero-controls {
 					display: none !important;
 				}
