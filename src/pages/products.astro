@@ -1,0 +1,156 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Products & Collections | USHA COTTON PRINTS">
+	<!-- Page Hero -->
+	<section class="page-hero bg-maroon">
+		<div class="container">
+			<h1 class="text-white text-center">Products and Collections</h1>
+			<div class="divider-line divider-gold mx-auto"></div>
+			<p class="text-white text-center sub-heading">Crafting Quality with Precision</p>
+		</div>
+	</section>
+
+	<!-- Intro -->
+	<section class="section-padding bg-cream text-center">
+		<div class="container" style="max-width: 900px;">
+			<h2 class="text-navy" style="font-size: 42px; margin-bottom: 25px;">Dynamic Needs of Modern Consumers</h2>
+			<p class="body-p text-navy" style="font-size: 18px;">
+				Usha Cotton specializes in high-quality ethnic wear that caters to the dynamic needs of modern consumers. We integrate modern aesthetics with traditional designs, providing vibrant, durable, and comfortable clothing that empowers the wearer.
+			</p>
+		</div>
+	</section>
+
+	<!-- Product 1: Sarees -->
+	<section class="section-padding bg-white">
+		<div class="container product-grid">
+			<div class="product-image">
+				<img src="/images/Saree-01.jpg" alt="Sarees Collection" class="rounded-img" />
+			</div>
+			<div class="product-content">
+				<div class="pro-badge">Flagship</div>
+				<h2 class="text-maroon">Premium Sarees</h2>
+				<div class="divider-line divider-navy small-divider"></div>
+				<p class="body-p">
+					Our flagship product line. Usha Cotton sarees embody the spirit of India's ancient weaving arts, enhanced with cutting-edge digital, gold, and reactive printing techniques. 
+				</p>
+				<p class="body-p mt-3">
+					Known for their intricate details, superior colour retention, and lasting durability, our sarees range from traditional cultural motifs to modern fashion statements.
+				</p>
+				<button class="btn btn-navy mt-5">View Gallery</button>
+			</div>
+		</div>
+	</section>
+
+	<!-- Product 2: Kurtis -->
+	<section class="section-padding bg-cream">
+		<div class="container product-grid reverse">
+			<div class="product-content">
+				<h2 class="text-navy">Fashionable Kurtis</h2>
+				<div class="divider-line divider-maroon small-divider"></div>
+				<p class="body-p">
+					Expanding our horizons into the rapidly growing women's ethnic wear market, we produce versatile and fashionable kurtis. 
+				</p>
+				<p class="body-p mt-3">
+					These garments integrate eco-friendly materials and modern designs tailored for everyday style and comfort, ensuring that tradition gracefully meets the contemporary lifestyle.
+				</p>
+				<button class="btn btn-maroon mt-5">Explore Kurtis</button>
+			</div>
+			<div class="product-image">
+				<img src="/images/Saree-02.jpg" alt="Kurtis Collection" class="rounded-img" />
+			</div>
+		</div>
+	</section>
+
+	<!-- Product 3: Dress Materials -->
+	<section class="section-padding bg-white">
+		<div class="container product-grid">
+			<div class="product-image">
+				<img src="/images/Saree-03.jpg" alt="Dress Materials" class="rounded-img" />
+			</div>
+			<div class="product-content">
+				<h2 class="text-maroon">Dress Materials</h2>
+				<div class="divider-line divider-gold small-divider"></div>
+				<p class="body-p">
+					We offer a diverse range of premium dress materials, allowing our customers to customize and craft their own unique ethnic wear. 
+				</p>
+				<p class="body-p mt-3">
+					Printed using our advanced technological capabilities, these fabrics offer endless possibilities for fashion designers and consumers alike, providing the perfect canvas for creativity.
+				</p>
+				<button class="btn btn-navy mt-5">Discover Fabrics</button>
+			</div>
+		</div>
+	</section>
+
+	<!-- Design & Customization -->
+	<section class="section-padding bg-navy text-white text-center">
+		<div class="container" style="max-width: 900px;">
+			<h2 class="text-gold" style="font-size: 48px; margin-bottom: 25px;">Design and Customization</h2>
+			<p class="body-p" style="font-size: 18px;">
+				Through our advanced digital printing capabilities, we offer extensive pattern and colour variations tailored to specific customer preferences. Looking forward, we are expanding our digital capabilities to include bespoke customizations for individual consumers, ensuring Usha Cotton continues to set industry trends.
+			</p>
+		</div>
+	</section>
+
+	<style>
+		.page-hero {
+			padding: 180px 0 100px;
+			position: relative;
+		}
+		.page-hero h1 {
+			font-size: 64px;
+			margin-bottom: 20px;
+		}
+		.mx-auto { margin-left: auto; margin-right: auto; }
+		.text-center { text-align: center; }
+		.mt-3 { margin-top: 15px; }
+		.mt-5 { margin-top: 40px; }
+
+		/* Utilities */
+		.bg-navy { background-color: var(--color-navy); }
+		.text-navy { color: var(--color-navy); }
+		.btn-navy { background: var(--color-navy); color: white; border: 1px solid var(--color-navy); }
+		.btn-navy:hover { background: transparent; color: var(--color-navy); }
+		.btn-maroon { background: var(--color-maroon); color: white; border: 1px solid var(--color-maroon); }
+		.btn-maroon:hover { background: transparent; color: var(--color-maroon); }
+
+		/* Product Grid */
+		.product-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 80px;
+			align-items: center;
+		}
+		.product-image { position: relative; }
+		.rounded-img { border-radius: 40px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+		
+		.product-content h2 { font-size: 56px; line-height: 1.1; }
+		.small-divider { width: 80px; margin: 25px 0; }
+		
+		.pro-badge {
+			display: inline-block;
+			background: var(--color-gold);
+			color: white;
+			font-family: var(--font-body);
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			font-size: 12px;
+			padding: 8px 16px;
+			border-radius: 50px;
+			margin-bottom: 15px;
+		}
+
+		@media (max-width: 1024px) {
+			.product-grid { grid-template-columns: 1fr; gap: 40px; }
+			.reverse .product-content { order: 2; }
+			.reverse .product-image { order: 1; }
+		}
+		@media (max-width: 768px) {
+			.page-hero { padding: 140px 0 60px; }
+			.page-hero h1 { font-size: 36px; }
+			.product-content h2 { font-size: 38px; }
+		}
+	</style>
+</Layout>

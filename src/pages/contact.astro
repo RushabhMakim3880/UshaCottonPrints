@@ -1,0 +1,186 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Contact Us | USHA COTTON PRINTS">
+	<!-- Page Hero -->
+	<section class="page-hero bg-maroon">
+		<div class="container">
+			<h1 class="text-white text-center">Get in Touch</h1>
+			<div class="divider-line divider-gold mx-auto"></div>
+			<p class="text-white text-center sub-heading">We would love to hear from you</p>
+		</div>
+	</section>
+
+	<section class="section-padding bg-cream">
+		<div class="container contact-grid">
+			<!-- Contact Information -->
+			<div class="contact-info">
+				<h2 class="text-navy">Reach Out To Us</h2>
+				<div class="divider-line divider-maroon small-divider"></div>
+				
+				<div class="info-block">
+					<h3 class="text-maroon">Our Headquarters</h3>
+					<p class="body-p text-navy">
+						Revenue Survey No.635p1, Plot No.8-12,<br/>
+						Chaprajpur, Jetpur, Dist. Rajkot,<br/>
+						Gujarat - 360370, India
+					</p>
+				</div>
+
+				<div class="info-block">
+					<h3 class="text-maroon">Direct Contact</h3>
+					<p class="body-p text-navy">
+						<strong>Phone:</strong> +91 98765 43210<br/>
+						<strong>Email:</strong> info@ushacotton.com
+					</p>
+				</div>
+
+				<div class="info-block">
+					<h3 class="text-maroon">Business Hours</h3>
+					<p class="body-p text-navy">
+						Monday - Saturday: 9:00 AM - 7:00 PM<br/>
+						Sunday: Closed
+					</p>
+				</div>
+			</div>
+
+			<!-- Contact Form -->
+			<div class="contact-form-wrapper bg-white">
+				<h3 class="text-navy" style="margin-bottom: 25px; font-size: 28px;">Send us a Message</h3>
+				<form class="contact-form" action="#" method="POST">
+					<div class="form-group">
+						<label for="name">Full Name</label>
+						<input type="text" id="name" name="name" placeholder="John Doe" required />
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="email">Email Address</label>
+							<input type="email" id="email" name="email" placeholder="john@example.com" required />
+						</div>
+						<div class="form-group">
+							<label for="phone">Phone Number</label>
+							<input type="tel" id="phone" name="phone" placeholder="+91 00000 00000" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="message">Your Message</label>
+						<textarea id="message" name="message" rows="5" placeholder="How can we help you?" required></textarea>
+					</div>
+					<button type="submit" class="btn btn-maroon w-100">Send Message</button>
+				</form>
+			</div>
+		</div>
+	</section>
+
+	<style>
+		.page-hero {
+			padding: 180px 0 100px;
+			position: relative;
+		}
+		.page-hero h1 {
+			font-size: 64px;
+			margin-bottom: 20px;
+		}
+		.mx-auto { margin-left: auto; margin-right: auto; }
+		.text-center { text-align: center; }
+
+		/* Layout */
+		.contact-grid {
+			display: grid;
+			grid-template-columns: 1fr 1.2fr;
+			gap: 80px;
+			align-items: flex-start;
+		}
+		.small-divider { width: 80px; margin: 20px 0 40px; }
+		
+		/* Info Blocks */
+		.info-block {
+			margin-bottom: 40px;
+		}
+		.info-block h3 {
+			font-size: 20px;
+			margin-bottom: 10px;
+			font-family: var(--font-body);
+			font-weight: 600;
+		}
+		.info-block p {
+			font-size: 16px;
+			line-height: 1.8;
+			opacity: 0.9;
+		}
+
+		/* Form */
+		.contact-form-wrapper {
+			padding: 50px;
+			border-radius: 30px;
+			box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+		}
+		.form-group {
+			margin-bottom: 25px;
+		}
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+		}
+		label {
+			display: block;
+			font-family: var(--font-body);
+			font-weight: 500;
+			margin-bottom: 8px;
+			color: var(--color-navy);
+			font-size: 14px;
+		}
+		input, textarea {
+			width: 100%;
+			padding: 15px 20px;
+			border: 1px solid #e0e0e0;
+			border-radius: 12px;
+			font-family: var(--font-body);
+			font-size: 15px;
+			background: #fdfdfd;
+			transition: all 0.3s ease;
+		}
+		input:focus, textarea:focus {
+			outline: none;
+			border-color: var(--color-maroon);
+			box-shadow: 0 0 0 4px rgba(156, 42, 77, 0.1);
+			background: white;
+		}
+		.w-100 {
+			width: 100%;
+		}
+		.btn-maroon {
+			background: var(--color-maroon);
+			color: white;
+			border: none;
+			padding: 18px;
+			font-size: 16px;
+			border-radius: 12px; /* modern slight radius */
+			cursor: pointer;
+			font-weight: 600;
+			font-family: var(--font-body);
+			transition: all 0.3s;
+		}
+		.btn-maroon:hover {
+			background: #7a1f3b; /* darker maroon */
+			transform: translateY(-2px);
+		}
+
+		@media (max-width: 1024px) {
+			.contact-grid {
+				grid-template-columns: 1fr;
+				gap: 50px;
+			}
+			.contact-form-wrapper {
+				padding: 40px 30px;
+			}
+		}
+		@media (max-width: 768px) {
+			.page-hero { padding: 140px 0 60px; }
+			.page-hero h1 { font-size: 36px; }
+			.form-row { grid-template-columns: 1fr; gap: 0; }
+		}
+	</style>
+</Layout>

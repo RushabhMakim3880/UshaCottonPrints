@@ -1,5 +1,5 @@
 ---
-import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
 
 const sarees = [
 	{ src: "/images/Saree-02.jpg", alt: "Green Saree Collection" },
@@ -23,1364 +23,1003 @@ const heroSlides = [
 ];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="generator" content={Astro.generator} />
-		<title>USHA COTTON PRINTS | Traditional Trust Since 1994</title>
-	</head>
-	<body>
-		<!-- SS1: Header -->
-		<header class="header transparent">
-			<div class="container header-flex">
-				<div class="logo-area">
-					<img
-						src="/images/logo.png"
-						alt="Usha Logo"
-						class="brand-logo"
-					/>
-				</div>
-				<nav class="nav-links">
-					<a href="#about">About us</a>
-					<a href="#printing">Printing</a>
-					<a href="#products">Products</a>
-					<a href="#contact">Contact</a>
-				</nav>
-				<div class="header-actions">
-					<button class="mobile-menu-toggle" id="menuToggle">
-						<span></span>
-						<span></span>
-					</button>
-				</div>
-			</div>
-		</header>
-
-		<!-- Mobile Nav Overlay -->
-		<div class="mobile-nav-overlay" id="mobileNav">
-			<button class="mobile-nav-close" id="closeMenu">✕</button>
-			<a href="#about">About us</a>
-			<a href="#printing">Printing</a>
-			<a href="#products">Products</a>
-			<a href="#contact">Contact</a>
+<Layout>
+	<!-- SS2: Hero -->
+	<section class="hero-section">
+		<div class="hero-slides">
+			{
+				heroSlides.map((slide, i) => (
+					<div
+						class={`hero-slide ${i === 0 ? "active" : ""}`}
+						data-index={i}
+					>
+						<div class="hero-bg">
+							<img src={slide.img} alt={slide.sub} />
+						</div>
+						<div class="container hero-inner">
+							<h1
+								class="text-maroon"
+								set:html={slide.title}
+							/>
+							<div class="hero-divider divider-white" />
+							<p class="text-navy sub-heading">
+								{slide.sub}
+							</p>
+						</div>
+					</div>
+				))
+			}
 		</div>
+		<div class="hero-controls">
+			<button class="nav-btn prev">
+				<svg
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					><path d="M15 19l-7-7 7-7"></path></svg
+				>
+			</button>
+			<button class="nav-btn next">
+				<svg
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					><path d="M9 5l7 7-7 7"></path></svg
+				>
+			</button>
+		</div>
+	</section>
 
-		<main>
-			<!-- SS2: Hero -->
-			<section class="hero-section">
-				<div class="hero-slides">
+	<script>
+		// 2. Hero Slider Logic
+		const heroSection = document.querySelector(".hero-section");
+		const slides = document.querySelectorAll(".hero-slide");
+		const nextHero = document.querySelector(".hero-controls .next");
+		const prevHero = document.querySelector(".hero-controls .prev");
+		let heroIdx = 0;
+		let touchStartX = 0;
+		let touchEndX = 0;
+
+		function updateHero(newIdx: number) {
+			slides[heroIdx].classList.remove("active");
+			heroIdx = (newIdx + slides.length) % slides.length;
+			slides[heroIdx].classList.add("active");
+		}
+
+		nextHero?.addEventListener("click", () =>
+			updateHero(heroIdx + 1),
+		);
+		prevHero?.addEventListener("click", () =>
+			updateHero(heroIdx - 1),
+		);
+
+		// Hero Touch Swipe
+		heroSection?.addEventListener("touchstart", (e: any) => {
+			touchStartX = e.changedTouches[0].screenX;
+		}, { passive: true });
+
+		heroSection?.addEventListener("touchend", (e: any) => {
+			touchEndX = e.changedTouches[0].screenX;
+			handleHeroSwipe();
+		}, { passive: true });
+
+		function handleHeroSwipe() {
+			const swipeThreshold = 50;
+			if (touchStartX - touchEndX > swipeThreshold) {
+				updateHero(heroIdx + 1); // Swipe Left -> Next
+			} else if (touchEndX - touchStartX > swipeThreshold) {
+				updateHero(heroIdx - 1); // Swipe Right -> Prev
+			}
+		}
+
+		// 3. Collection Infinite Loop Slider + Auto-Flow
+		const track = document.querySelector(".collection-track") as HTMLElement;
+		const progress = document.querySelector(".progress-fill") as HTMLElement;
+		const collectionButtons = document.querySelectorAll(".slider-controls-v5 .arrow-circ");
+		const prevCol = collectionButtons[0];
+		const nextCol = collectionButtons[1];
+
+		if (track && progress) {
+			const totalWidth = track.scrollWidth;
+			track.scrollLeft = totalWidth / 3;
+
+			let isAutoPlaying = true;
+			let animationFrame: number;
+			let interactionTimeout: any;
+
+			const autoScroll = () => {
+				if (isAutoPlaying) {
+					track.scrollLeft += 0.8; // Silky slow speed
+				}
+				animationFrame = requestAnimationFrame(autoScroll);
+			};
+
+			track.addEventListener("scroll", () => {
+				const currentScroll = track.scrollLeft;
+
+				// Seamless Jump Logic
+				if (currentScroll <= 10) {
+					track.scrollLeft = totalWidth / 3;
+				} else if (currentScroll >= (totalWidth * 2 / 3)) {
+					track.scrollLeft = totalWidth / 3;
+				}
+
+				// Progress bar (mapped to one "loop" segment)
+				const segmentWidth = totalWidth / 3;
+				const segmentScroll = currentScroll % segmentWidth;
+				const scrollPercent = (segmentScroll / (segmentWidth - track.clientWidth)) * 100;
+				progress.style.width = `${Math.min(100, Math.max(0, scrollPercent))}%`;
+			});
+
+			// Interaction Control
+			track.addEventListener("mouseenter", () => isAutoPlaying = false);
+			track.addEventListener("mouseleave", () => isAutoPlaying = true);
+			
+			track.addEventListener("touchstart", () => {
+				isAutoPlaying = false;
+				clearTimeout(interactionTimeout);
+			}, { passive: true });
+
+			track.addEventListener("touchend", () => {
+				interactionTimeout = setTimeout(() => {
+					isAutoPlaying = true;
+				}, 3000);
+			}, { passive: true });
+
+			nextCol?.addEventListener("click", () => {
+				isAutoPlaying = false;
+				track.scrollBy({ left: 400, behavior: "smooth" });
+				clearTimeout(interactionTimeout);
+				interactionTimeout = setTimeout(() => isAutoPlaying = true, 3000);
+			});
+			prevCol?.addEventListener("click", () => {
+				isAutoPlaying = false;
+				track.scrollBy({ left: -400, behavior: "smooth" });
+				clearTimeout(interactionTimeout);
+				interactionTimeout = setTimeout(() => isAutoPlaying = true, 3000);
+			});
+
+			autoScroll();
+		}
+
+		// 4. Machinery Gallery Slider
+		const machineDots = document.querySelectorAll(".v-dots span");
+		const machineryVisual = document.querySelector(".machinery-visual");
+		const machineImg = document.getElementById("machineImg") as HTMLImageElement;
+		const machineImages = [
+			"/images/machinery.jpg",
+			"/images/machinery-2.jpg",
+			"/images/machinery-3.jpg"
+		];
+		let machineIdx = 0;
+		let machineStartX = 0;
+		let machineEndX = 0;
+
+		function updateMachine(newIdx: number) {
+			machineDots.forEach((d) => d.classList.remove("active"));
+			machineIdx = (newIdx + machineDots.length) % machineDots.length;
+			machineDots[machineIdx].classList.add("active");
+			
+			if (machineImg) {
+				machineImg.style.opacity = "0";
+				setTimeout(() => {
+					machineImg.src = machineImages[machineIdx];
+					machineImg.style.opacity = "1";
+				}, 300);
+			}
+		}
+
+		machineDots.forEach((dot, i) => {
+			dot.addEventListener("click", () => updateMachine(i));
+		});
+
+		machineryVisual?.addEventListener("touchstart", (e: any) => {
+			machineStartX = e.changedTouches[0].screenX;
+		}, { passive: true });
+
+		machineryVisual?.addEventListener("touchend", (e: any) => {
+			machineEndX = e.changedTouches[0].screenX;
+			const threshold = 50;
+			if (machineStartX - machineEndX > threshold) {
+				updateMachine(machineIdx + 1);
+			} else if (machineEndX - machineStartX > threshold) {
+				updateMachine(machineIdx - 1);
+			}
+		}, { passive: true });
+	</script>
+
+	<!-- SS3: New Collection -->
+	<section class="section-padding bg-white">
+		<div class="container">
+			<h2 class="text-maroon section-title">New Collection</h2>
+			<div class="collection-wrapper">
+				<div class="collection-track">
 					{
-						heroSlides.map((slide, i) => (
+						[...sarees, ...sarees, ...sarees].map((saree, i) => (
 							<div
-								class={`hero-slide ${i === 0 ? "active" : ""}`}
-								data-index={i}
+								class={`collection-card card-${(i % 5) + 1}`}
 							>
-								<div class="hero-bg">
-									<img src={slide.img} alt={slide.sub} />
-								</div>
-								<div class="container hero-inner">
-									<h1
-										class="text-maroon"
-										set:html={slide.title}
-									/>
-									<div class="hero-divider divider-white" />
-									<p class="text-navy sub-heading">
-										{slide.sub}
-									</p>
-								</div>
+								<img src={saree.src} alt={saree.alt} />
 							</div>
 						))
 					}
 				</div>
-				<div class="hero-controls">
-					<button class="nav-btn prev">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							><path d="M15 19l-7-7 7-7"></path></svg
-						>
-					</button>
-					<button class="nav-btn next">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							><path d="M9 5l7 7-7 7"></path></svg
-						>
-					</button>
-				</div>
-			</section>
-
-			<script>
-				// 1. Header Scroll Logic
-				const header = document.querySelector(".header");
-				if (header) {
-					window.addEventListener("scroll", () => {
-						if (window.scrollY > 50) {
-							header.classList.remove("transparent");
-							header.classList.add("scrolled");
-						} else {
-							header.classList.add("transparent");
-							header.classList.remove("scrolled");
-						}
-					});
-				}
-
-				// 2. Hero Slider Logic
-				const heroSection = document.querySelector(".hero-section");
-				const slides = document.querySelectorAll(".hero-slide");
-				const nextHero = document.querySelector(".hero-controls .next");
-				const prevHero = document.querySelector(".hero-controls .prev");
-				let heroIdx = 0;
-				let touchStartX = 0;
-				let touchEndX = 0;
-
-				function updateHero(newIdx: number) {
-					slides[heroIdx].classList.remove("active");
-					heroIdx = (newIdx + slides.length) % slides.length;
-					slides[heroIdx].classList.add("active");
-				}
-
-				nextHero?.addEventListener("click", () =>
-					updateHero(heroIdx + 1),
-				);
-				prevHero?.addEventListener("click", () =>
-					updateHero(heroIdx - 1),
-				);
-
-				// Hero Touch Swipe
-				heroSection?.addEventListener("touchstart", (e: any) => {
-					touchStartX = e.changedTouches[0].screenX;
-				}, { passive: true });
-
-				heroSection?.addEventListener("touchend", (e: any) => {
-					touchEndX = e.changedTouches[0].screenX;
-					handleHeroSwipe();
-				}, { passive: true });
-
-				function handleHeroSwipe() {
-					const swipeThreshold = 50;
-					if (touchStartX - touchEndX > swipeThreshold) {
-						updateHero(heroIdx + 1); // Swipe Left -> Next
-					} else if (touchEndX - touchStartX > swipeThreshold) {
-						updateHero(heroIdx - 1); // Swipe Right -> Prev
-					}
-				}
-
-				// 3. Collection Infinite Loop Slider + Auto-Flow
-				const track = document.querySelector(".collection-track") as HTMLElement;
-				const progress = document.querySelector(".progress-fill") as HTMLElement;
-				const collectionButtons = document.querySelectorAll(".slider-controls-v5 .arrow-circ");
-				const prevCol = collectionButtons[0];
-				const nextCol = collectionButtons[1];
-
-				if (track && progress) {
-					const totalWidth = track.scrollWidth;
-					track.scrollLeft = totalWidth / 3;
-
-					let isAutoPlaying = true;
-					let animationFrame: number;
-					let interactionTimeout: any;
-
-					const autoScroll = () => {
-						if (isAutoPlaying) {
-							track.scrollLeft += 0.8; // Silky slow speed
-						}
-						animationFrame = requestAnimationFrame(autoScroll);
-					};
-
-					track.addEventListener("scroll", () => {
-						const currentScroll = track.scrollLeft;
-
-						// Seamless Jump Logic
-						if (currentScroll <= 10) {
-							track.scrollLeft = totalWidth / 3;
-						} else if (currentScroll >= (totalWidth * 2 / 3)) {
-							track.scrollLeft = totalWidth / 3;
-						}
-
-						// Progress bar (mapped to one "loop" segment)
-						const segmentWidth = totalWidth / 3;
-						const segmentScroll = currentScroll % segmentWidth;
-						const scrollPercent = (segmentScroll / (segmentWidth - track.clientWidth)) * 100;
-						progress.style.width = `${Math.min(100, Math.max(0, scrollPercent))}%`;
-					});
-
-					// Interaction Control
-					track.addEventListener("mouseenter", () => isAutoPlaying = false);
-					track.addEventListener("mouseleave", () => isAutoPlaying = true);
-					
-					track.addEventListener("touchstart", () => {
-						isAutoPlaying = false;
-						clearTimeout(interactionTimeout);
-					}, { passive: true });
-
-					track.addEventListener("touchend", () => {
-						interactionTimeout = setTimeout(() => {
-							isAutoPlaying = true;
-						}, 3000);
-					}, { passive: true });
-
-					nextCol?.addEventListener("click", () => {
-						isAutoPlaying = false;
-						track.scrollBy({ left: 400, behavior: "smooth" });
-						clearTimeout(interactionTimeout);
-						interactionTimeout = setTimeout(() => isAutoPlaying = true, 3000);
-					});
-					prevCol?.addEventListener("click", () => {
-						isAutoPlaying = false;
-						track.scrollBy({ left: -400, behavior: "smooth" });
-						clearTimeout(interactionTimeout);
-						interactionTimeout = setTimeout(() => isAutoPlaying = true, 3000);
-					});
-
-					autoScroll();
-				}
-
-				// 4. Machinery Gallery Slider
-				const machineDots = document.querySelectorAll(".v-dots span");
-				const machineryVisual = document.querySelector(".machinery-visual");
-				const machineImg = document.getElementById("machineImg") as HTMLImageElement;
-				const machineImages = [
-					"/images/machinery.jpg",
-					"/images/machinery-2.jpg",
-					"/images/machinery-3.jpg"
-				];
-				let machineIdx = 0;
-				let machineStartX = 0;
-				let machineEndX = 0;
-
-				function updateMachine(newIdx: number) {
-					machineDots.forEach((d) => d.classList.remove("active"));
-					machineIdx = (newIdx + machineDots.length) % machineDots.length;
-					machineDots[machineIdx].classList.add("active");
-					
-					if (machineImg) {
-						machineImg.style.opacity = "0";
-						setTimeout(() => {
-							machineImg.src = machineImages[machineIdx];
-							machineImg.style.opacity = "1";
-						}, 300);
-					}
-				}
-
-				machineDots.forEach((dot, i) => {
-					dot.addEventListener("click", () => updateMachine(i));
-				});
-
-				machineryVisual?.addEventListener("touchstart", (e: any) => {
-					machineStartX = e.changedTouches[0].screenX;
-				}, { passive: true });
-
-				machineryVisual?.addEventListener("touchend", (e: any) => {
-					machineEndX = e.changedTouches[0].screenX;
-					const threshold = 50;
-					if (machineStartX - machineEndX > threshold) {
-						updateMachine(machineIdx + 1);
-					} else if (machineEndX - machineStartX > threshold) {
-						updateMachine(machineIdx - 1);
-					}
-				}, { passive: true });
-
-				// 5. Mobile Menu Toggle
-				const menuToggle = document.getElementById("menuToggle");
-				const closeMenu = document.getElementById("closeMenu");
-				const mobileNav = document.getElementById("mobileNav");
-				const mobileLinks = document.querySelectorAll(".mobile-nav-overlay a");
-
-				menuToggle?.addEventListener("click", () => {
-					mobileNav?.classList.add("active");
-				});
-
-				closeMenu?.addEventListener("click", () => {
-					mobileNav?.classList.remove("active");
-				});
-
-				mobileLinks.forEach(link => {
-					link.addEventListener("click", () => {
-						mobileNav?.classList.remove("active");
-					});
-				});
-			</script>
-
-			<!-- SS3: New Collection (Pixel Perfect Staggered Slider) -->
-			<section class="section-padding bg-white">
-				<div class="container">
-					<h2 class="text-maroon section-title">New Collection</h2>
-					<div class="collection-wrapper">
-						<div class="collection-track">
-							{
-								[...sarees, ...sarees, ...sarees].map((saree, i) => (
-									<div
-										class={`collection-card card-${(i % 5) + 1}`}
-									>
-										<img src={saree.src} alt={saree.alt} />
-									</div>
-								))
-							}
-						</div>
-						<div class="slider-controls-v5">
-							<button class="arrow-circ">←</button>
-							<div class="progress-bar-v5">
-								<div class="progress-fill"></div>
-							</div>
-							<button class="arrow-circ">→</button>
-						</div>
+				<div class="slider-controls-v5">
+					<button class="arrow-circ">←</button>
+					<div class="progress-bar-v5">
+						<div class="progress-fill"></div>
 					</div>
+					<button class="arrow-circ">→</button>
 				</div>
-			</section>
+			</div>
+		</div>
+	</section>
 
-			<!-- SS4: Excellence Section -->
-			<section class="section-padding bg-maroon">
-				<div class="container excellence-grid">
-					<div class="excellence-image">
+	<!-- SS4: Excellence Section -->
+	<section class="section-padding bg-maroon">
+		<div class="container excellence-grid">
+			<div class="excellence-image">
+				<img
+					src="/images/woman-green-sari-sits-couch.jpg"
+					alt="Quality Excellence"
+					class="rounded-img"
+				/>
+				<div class="exp-badge">
+					<span class="count">15+</span>
+					<span class="label"
+						>Years Experience in<br />Textile Industry</span
+					>
+				</div>
+			</div>
+			<div class="excellence-content">
+				<h2 class="text-white">
+					A Decade of Excellence<br />and Innovation
+				</h2>
+				<div class="divider-line divider-gold small-divider">
+				</div>
+				<h3 class="text-gold">
+					Celebrating Progress and Responsibility
+				</h3>
+				<p class="text-white body-p">
+					Established in 2007 in Jetpur, Gujarat, Usha Cotton has risen as a beacon in the textile industry. We are renowned for our exquisite sarees that perfectly blend India's rich textile traditions with pioneering technologies, achieving a 95% customer satisfaction rate.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- SS5: Modern Technology -->
+	<section class="section-padding">
+		<div class="container machinery-grid">
+			<div class="machinery-content">
+				<h2 class="text-maroon">
+					Modern Machinery,<br />Traditional Trust
+				</h2>
+				<div class="divider-line divider-navy small-divider">
+				</div>
+				<p class="body-p">
+					Our state-of-the-art manufacturing facilities are equipped with the latest technology, including automated fabric cutting systems and ERP integration. By seamlessly integrating sophisticated digital printing techniques with established reactive methods, we optimize efficiency for high-volume production while maintaining impeccable quality.
+				</p>
+			</div>
+			<div class="machinery-visual">
+				<img
+					src="/images/machinery.jpg"
+					alt="Advanced Machinery"
+					class="rounded-img"
+					id="machineImg"
+					style="transition: opacity 0.3s ease;"
+				/>
+				<div class="v-dots">
+					<span class="active"></span>
+					<span></span>
+					<span></span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- SS6: Journey Section -->
+	<section class="section-padding bg-cream">
+		<div class="container journey-grid">
+			<div class="journey-visual">
+				<img
+					src="/images/businessman-standing-top-concrete-stairway-watching-town-future-success-leadership-concept.jpg"
+					alt="Founder Journey"
+					class="rounded-img"
+				/>
+			</div>
+			<div class="journey-text-content">
+				<h2 class="text-maroon journey-heading">
+					The Journey<br />of Founder
+				</h2>
+				<div class="timeline-visual">
+					<div class="swoosh-container">
 						<img
-							src="/images/woman-green-sari-sits-couch.jpg"
-							alt="Quality Excellence"
-							class="rounded-img"
-						/>
-						<div class="exp-badge">
-							<span class="count">15+</span>
-							<span class="label"
-								>Years Experience in<br />Textile Industry</span
-							>
-						</div>
-					</div>
-					<div class="excellence-content">
-						<h2 class="text-white">
-							A Decade of Excellence<br />and Innovation
-						</h2>
-						<div class="divider-line divider-gold small-divider">
-						</div>
-						<h3 class="text-gold">
-							Celebrating Progress and Responsibility
-						</h3>
-						<p class="text-white body-p">
-							Lorem ipsum dolor sit amet, consectetuer adipiscing
-							elit, sed diam nonummy nibh euismod tincidunt ut
-							laoreet dolore magna aliquam erat volutpat. Ut wisi
-							enim ad minim veniam, quis nostrud exerci tation
-							ullamcorper suscipit lobortis nisl ut aliquip ex ea
-							commodo consequat.
-						</p>
-					</div>
-				</div>
-			</section>
-
-			<!-- SS5: Modern Technology -->
-			<section class="section-padding">
-				<div class="container machinery-grid">
-					<div class="machinery-content">
-						<h2 class="text-maroon">
-							Modern Machinery,<br />Traditional Trust
-						</h2>
-						<div class="divider-line divider-navy small-divider">
-						</div>
-						<p class="body-p">
-							Lorem ipsum dolor sit amet, consectetuer adipiscing
-							elit, sed diam nonummy nibh euismod tincidunt ut
-							laoreet dolore magna aliquam erat volutpat. Ut wisi
-							enim ad minim veniam, quis nostrud exerci tation
-							ullamcorper suscipit lobortis nisl ut aliquip ex ea
-							commodo consequat. Duis autem vel eum iriure dolor
-							in hendrerit in vulputate velit esse molestie
-							consequat, vel illum dolore eu feugiat
-						</p>
-					</div>
-					<div class="machinery-visual">
-						<img
-							src="/images/machinery.jpg"
-							alt="Advanced Machinery"
-							class="rounded-img"
-							id="machineImg"
-							style="transition: opacity 0.3s ease;"
-						/>
-						<div class="v-dots">
-							<span class="active"></span>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- SS6: Journey Section (FIXED PARITY) -->
-			<section class="section-padding bg-cream">
-				<div class="container journey-grid">
-					<div class="journey-visual">
-						<img
-							src="/images/businessman-standing-top-concrete-stairway-watching-town-future-success-leadership-concept.jpg"
-							alt="Founder Journey"
-							class="rounded-img"
+							src="/images/swooshBig.png"
+							alt="Journey Route"
+							class="swoosh-img"
 						/>
 					</div>
-					<div class="journey-text-content">
-						<h2 class="text-maroon journey-heading">
-							The Journey<br />of Founder
-						</h2>
-						<div class="timeline-visual">
-							<div class="swoosh-container">
-								<img
-									src="/images/swooshBig.png"
-									alt="Journey Route"
-									class="swoosh-img"
-								/>
-							</div>
-						</div>
-						<a href="#" class="btn btn-white journey-btn"
-							>View Journey</a
-						>
-					</div>
 				</div>
-			</section>
+				<a href="#" class="btn btn-white journey-btn"
+					>View Journey</a
+				>
+			</div>
+		</div>
+	</section>
 
-			<!-- SS7: Callout Section (PIXEL PERFECT FONTS & ICONS) -->
-			<section class="section-padding bg-cream">
-				<div class="container">
-					<div class="callout-heading">
-						<h2 class="text-navy">
-							We give <span class="highlight-maroon">top production</span> from every angle
-						</h2>
-						<div class="callout-divider"></div>
+	<!-- SS7: Callout Section -->
+	<section class="section-padding bg-cream">
+		<div class="container">
+			<div class="callout-heading">
+				<h2 class="text-navy">
+					We give <span class="highlight-maroon">top production</span> from every angle
+				</h2>
+				<div class="callout-divider"></div>
+			</div>
+			<div class="services-grid">
+				<div class="service-card">
+					<div class="card-icon">
+						<img
+							src="/images/icons/icon-fabrics.png"
+							alt="Fabrics"
+							class="icon-img"
+						/>
 					</div>
-					<div class="services-grid">
-						<div class="service-card">
-							<div class="card-icon">
-								<img
-									src="/images/icons/icon-fabrics.png"
-									alt="Fabrics"
-									class="icon-img"
-								/>
-							</div>
-							<div class="card-line"></div>
-							<h3 class="card-title">
-								Choose from Many Fabrics<br/>& Textile materials
-							</h3>
-							<p class="card-body">
-								Lorem ipsum dolor sit amet,<br/>consectetuer adipiscing elit.
-							</p>
-						</div>
-						<div class="service-card">
-							<div class="card-icon">
-								<img
-									src="/images/icons/icon-design.png"
-									alt="Design"
-									class="icon-img"
-								/>
-							</div>
-							<div class="card-line"></div>
-							<h3 class="card-title">
-								Create your Design<br/>for the fabric production
-							</h3>
-							<p class="card-body">
-								Lorem ipsum dolor sit amet,<br/>consectetuer adipiscing elit.
-							</p>
-						</div>
-						<div class="service-card">
-							<div class="card-icon">
-								<img
-									src="/images/icons/icon-quantity.png"
-									alt="Quantity"
-									class="icon-img"
-								/>
-							</div>
-							<div class="card-line"></div>
-							<h3 class="card-title">
-								Order your Quantity<br/>to get Modern textile art
-							</h3>
-							<p class="card-body">
-								Lorem ipsum dolor sit amet,<br/>consectetuer adipiscing elit.
-							</p>
-						</div>
-					</div>
+					<div class="card-line"></div>
+					<h3 class="card-title">
+						Premium Fabrics<br/>and Materials
+					</h3>
+					<p class="card-body">
+						Select from a diverse range of premium dress materials tailored for modern comfort.
+					</p>
 				</div>
-			</section>
-		</main>
-
-		<!-- SS8: Footer -->
-		<footer class="footer-section bg-maroon text-white">
-			<div class="container footer-flex">
-				<div class="f-logo">
-					<img
-						src="/images/footer-logo.png"
-						alt="Usha"
-						class="logo-footer"
-					/>
-				</div>
-				<nav class="f-nav">
-					<div class="f-nav-col">
-						<a href="#">About us</a>
-						<a href="#">Printing</a>
+				<div class="service-card">
+					<div class="card-icon">
+						<img
+							src="/images/icons/icon-design.png"
+							alt="Design"
+							class="icon-img"
+						/>
 					</div>
-					<div class="f-nav-col">
-						<a href="#">Products</a>
-						<a href="#">Journey</a>
-					</div>
-				</nav>
-				<div class="f-socials">
-					<a href="#" class="icon-circ" aria-label="WhatsApp">
-						<svg
-							width="18"
-							height="18"
-							viewBox="0 0 24 24"
-							fill="white"
-							><path
-								d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.433h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
-							></path></svg
-						>
-					</a>
-					<a href="#" class="icon-circ" aria-label="Twitter">
-						<svg
-							width="18"
-							height="18"
-							viewBox="0 0 24 24"
-							fill="white"
-							><path
-								d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"
-							></path></svg
-						>
-					</a>
-					<a href="#" class="icon-circ" aria-label="Facebook">
-						<svg
-							width="18"
-							height="18"
-							viewBox="0 0 24 24"
-							fill="white"
-							><path
-								d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-							></path></svg
-						>
-					</a>
-					<a href="#" class="icon-circ" aria-label="Instagram">
-						<svg
-							width="18"
-							height="18"
-							viewBox="0 0 24 24"
-							fill="white"
-							><path
-								d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
-							></path></svg
-						>
-					</a>
-					<a href="#" class="icon-circ" aria-label="LinkedIn">
-						<svg
-							width="18"
-							height="18"
-							viewBox="0 0 24 24"
-							fill="white"
-							><path
-								d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v5.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z"
-							></path></svg
-						>
-					</a>
+					<div class="card-line"></div>
+					<h3 class="card-title">
+						Bespoke Design<br/>and Customization
+					</h3>
+					<p class="card-body">
+						Leverage our advanced digital capabilities for bespoke pattern and colour customization.
+					</p>
 				</div>
-				<div class="f-address">
-					<p>
-						Revenue Survey No.635p1, Plot No.8-12,<br /> Chaprajpur, Jetpur,
-						Dist. Rajkot,<br /> Gujarat - 360370, India
+				<div class="service-card">
+					<div class="card-icon">
+						<img
+							src="/images/icons/icon-quantity.png"
+							alt="Quantity"
+							class="icon-img"
+						/>
+					</div>
+					<div class="card-line"></div>
+					<h3 class="card-title">
+						High-Volume<br/>Scalable Production
+					</h3>
+					<p class="card-body">
+						Our lean manufacturing principles optimize efficiency for rapid, high-volume production.
 					</p>
 				</div>
 			</div>
-		</footer>
+		</div>
+	</section>
 
-		<style>
-			/* SS1: HEADER */
-			.header {
-				height: 80px;
-				display: flex;
-				align-items: center;
-				position: fixed;
-				width: 100%;
-				top: 0;
-				z-index: 1000;
-				transition: all 0.3s ease;
-				background: white;
-				border-bottom: 1px solid #f0f0f0;
-			}
-			.header.scrolled {
-				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-			}
-			.header-flex {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				width: 100%;
-			}
-			.brand-logo {
-				width: 160px;
-			}
-			.nav-links {
-				display: flex;
-				gap: 50px;
-			}
-			.nav-links a {
-				font-family: var(--font-body);
-				font-weight: 600;
-				font-size: 0.95rem;
-				color: var(--color-navy);
-				transition: color 0.3s;
-				text-decoration: none;
-			}
-			.mobile-menu-toggle {
-				display: none;
-				background: none;
-				border: none;
-				width: 28px;
-				gap: 8px;
-				flex-direction: column;
-				cursor: pointer;
-			}
-			.mobile-menu-toggle span {
-				height: 1px;
-				width: 100%;
-				background: var(--color-navy);
-				display: block;
-			}
+	<style>
+		/* SS2: HERO */
+		.hero-section {
+			height: 100vh;
+			position: relative;
+			overflow: hidden;
+		}
+		.hero-slides {
+			position: absolute;
+			inset: 0;
+		}
+		.hero-slide {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			transition: opacity 1.5s ease;
+			display: flex;
+			align-items: center;
+		}
+		.hero-slide.active {
+			opacity: 1;
+			z-index: 1;
+		}
+		.hero-bg {
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+		}
+		.hero-bg img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.hero-inner {
+			position: relative;
+			z-index: 2;
+			transform: translateY(30px);
+			transition: transform 1s ease;
+		}
+		.hero-slide.active .hero-inner {
+			transform: translateY(0);
+		}
+		.hero-section h1 {
+			font-size: 64px;
+		}
+		.hero-divider {
+			width: 140px;
+			height: 4px;
+			margin: 25px 0;
+		}
+		.sub-heading {
+			font-size: 24px;
+			font-weight: bold;
+		}
+		.hero-controls {
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			padding: 0 40px;
+			transform: translateY(-50%);
+			pointer-events: none;
+			z-index: 10;
+		}
+		.nav-btn {
+			pointer-events: auto;
+			background: none;
+			border: none;
+			color: white;
+			width: 50px;
+			height: 50px;
+			cursor: pointer;
+			opacity: 0.7;
+			transition: opacity 0.3s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.nav-btn svg {
+			width: 40px;
+			height: 40px;
+		}
+		.nav-btn:hover {
+			opacity: 1;
+		}
 
-			/* MOBILE NAV OVERLAY */
-			.mobile-nav-overlay {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: var(--color-white);
-				z-index: 2000;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				gap: 30px;
-				transform: translateY(-100%);
-				transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
-			}
-			.mobile-nav-overlay.active {
-				transform: translateY(0);
-			}
-			.mobile-nav-overlay a {
-				font-size: 24px;
-				color: var(--color-navy);
-				font-weight: 500;
-				text-decoration: none;
-			}
-			.mobile-nav-close {
-				position: absolute;
-				top: 20px;
-				right: 20px;
-				font-size: 30px;
-				background: none;
-				border: none;
-				color: var(--color-navy);
-			}
+		/* SS3: COLLECTION */
+		.section-title {
+			text-align: center;
+			margin-bottom: 60px;
+			font-size: 64px;
+			font-weight: 400;
+		}
+		.collection-wrapper {
+			width: 100%;
+			margin: 0 auto;
+			position: relative;
+			padding-bottom: 80px;
+		}
+		.collection-track {
+			display: flex;
+			gap: 30px;
+			align-items: flex-start;
+			overflow-x: auto;
+			scroll-behavior: smooth;
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+			padding: 0 50px;
+		}
+		.collection-track::-webkit-scrollbar {
+			display: none;
+		}
+		.collection-card {
+			width: 285px;
+			flex-shrink: 0;
+		}
+		.collection-card img {
+			width: 100%;
+			height: 420px;
+			object-fit: cover;
+			border-radius: 40px;
+			box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+		}
+		/* Organic Wave Rhythm */
+		.card-1 {
+			margin-top: 20px;
+		}
+		.card-2 {
+			margin-top: 150px;
+		}
+		.card-3 {
+			margin-top: 60px;
+		}
+		.card-4 {
+			margin-top: 120px;
+		}
+		.card-5 {
+			margin-top: 40px;
+		}
+		.slider-controls-v5 {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 30px;
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 100%;
+		}
+		.progress-bar-v5 {
+			width: 100%;
+			max-width: 764px;
+			height: 4px;
+			background: #e0e0e0;
+			border-radius: 10px;
+			position: relative;
+		}
+		.progress-fill {
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 100%;
+			width: 5%;
+			background: var(--color-navy);
+			border-radius: 10px;
+			transition: width 0.2s ease;
+		}
+		.arrow-circ {
+			width: 45px;
+			height: 45px;
+			border: 1px solid #ddd;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: none;
+			cursor: pointer;
+			color: var(--color-navy);
+		}
 
-			/* SS2: HERO */
-			.hero-section {
-				height: 100vh;
-				position: relative;
-				overflow: hidden;
+		/* SS4: EXCELLENCE */
+		.excellence-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 80px;
+			align-items: center;
+		}
+		.excellence-image {
+			position: relative;
+		}
+		.rounded-img {
+			border-radius: 40px;
+			width: 100%;
+		}
+		.exp-badge {
+			position: absolute;
+			bottom: -30px;
+			left: -30px;
+			background: white;
+			padding: 25px 40px;
+			border-radius: 20px;
+			display: flex;
+			gap: 20px;
+			align-items: center;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+			z-index: 5;
+		}
+		.exp-badge .count {
+			font-size: 40px;
+			font-weight: bold;
+			font-family: var(--font-heading);
+			color: var(--color-maroon);
+		}
+		.exp-badge .label {
+			font-size: 12px;
+			font-weight: bold;
+			text-transform: uppercase;
+			line-height: 1.4;
+			color: var(--color-maroon);
+		}
+		.excellence-content h2 {
+			font-size: 48px;
+		}
+		.small-divider {
+			width: 80px;
+			margin: 20px 0;
+		}
+		.excellence-content h3 {
+			font-family: var(--font-body);
+			font-size: 24px;
+			font-weight: bold;
+			margin-bottom: 25px;
+		}
+		.body-p {
+			font-size: 16px;
+			line-height: 1.8;
+			opacity: 0.9;
+		}
+
+		/* SS5: MACHINERY */
+		.machinery-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 80px;
+			align-items: center;
+		}
+		.machinery-content h2 {
+			font-size: 48px;
+		}
+		.machinery-visual {
+			position: relative;
+			padding-bottom: 40px;
+		}
+		.v-dots {
+			display: flex;
+			gap: 10px;
+			margin-top: 20px;
+			justify-content: center;
+			width: 100%;
+		}
+		.v-dots span {
+			width: 8px;
+			height: 8px;
+			background: #ddd;
+			border-radius: 50%;
+		}
+		.v-dots span.active {
+			background: var(--color-navy);
+		}
+
+		/* SS6: JOURNEY */
+		.journey-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 60px;
+			align-items: center;
+			padding: 100px 0;
+		}
+		.journey-text-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+		}
+		.journey-heading {
+			font-size: 64px;
+			line-height: 1.1;
+			margin-bottom: 20px;
+		}
+		.timeline-visual {
+			width: 100%;
+			position: relative;
+			margin: 40px 0;
+		}
+		.swoosh-container {
+			width: 100%;
+			max-width: 1000px;
+			margin: 0 auto;
+			overflow: hidden;
+		}
+		.swoosh-img {
+			width: 100%;
+			height: auto;
+			display: block;
+			filter: saturate(1.2);
+		}
+		.journey-btn {
+			padding: 18px 50px;
+			border-radius: 50px;
+			font-weight: 600;
+			font-size: 16px;
+			border: 1px solid #eee;
+			background: white;
+			color: var(--color-navy);
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+		}
+
+		/* SS7: CALLOUT */
+		.callout-heading {
+			text-align: center;
+			margin-bottom: 60px;
+		}
+		.callout-heading h2 {
+			font-family: var(--font-body);
+			font-size: 48px;
+			font-weight: 500;
+			letter-spacing: -0.01em;
+		}
+		.highlight-maroon {
+			color: var(--color-maroon);
+			display: block;
+			margin-top: 15px;
+		}
+		.callout-divider {
+			width: 80px;
+			height: 5px;
+			background: var(--color-maroon);
+			margin: 15px auto 0;
+			border-radius: 10px;
+		}
+		.services-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 30px;
+		}
+		.service-card {
+			background: #f8f9fb;
+			padding: 50px 40px;
+			border-radius: 30px;
+			text-align: left;
+			transition: transform 0.3s;
+		}
+		.service-card:hover { transform: translateY(-5px); }
+		.card-icon {
+			margin-bottom: 25px;
+		}
+		.icon-img {
+			height: 50px;
+			width: auto;
+		}
+		.card-line {
+			width: 100%;
+			height: 1.5px;
+			background: var(--color-navy);
+			margin-bottom: 30px;
+			opacity: 0.8;
+		}
+		.card-title {
+			font-family: var(--font-body);
+			font-size: 24px;
+			font-weight: 500;
+			margin-bottom: 25px;
+			color: var(--color-navy);
+			line-height: 1.3;
+		}
+		.card-body {
+			font-family: var(--font-body);
+			font-size: 15px;
+			color: #888;
+			line-height: 1.6;
+			margin: 0;
+		}
+
+		/* ===== TABLET (max 1024px) ===== */
+		@media (max-width: 1024px) {
+			.container {
+				width: 100% !important;
+				max-width: 100% !important;
+				padding: 0 20px !important;
 			}
-			.hero-slides {
-				position: absolute;
-				inset: 0;
-			}
-			.hero-slide {
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				opacity: 0;
-				transition: opacity 1.5s ease;
-				display: flex;
-				align-items: center;
-			}
-			.hero-slide.active {
-				opacity: 1;
-				z-index: 1;
-			}
-			.hero-bg {
-				position: absolute;
-				inset: 0;
-				z-index: -1;
-			}
-			.hero-bg img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-			}
-			.hero-inner {
-				position: relative;
-				z-index: 2;
-				transform: translateY(30px);
-				transition: transform 1s ease;
-			}
-			.hero-slide.active .hero-inner {
-				transform: translateY(0);
-			}
-			.hero-section h1 {
-				font-size: 64px;
-			}
-			.hero-divider {
-				width: 140px;
-				height: 4px;
-				margin: 25px 0;
-			}
-			.sub-heading {
-				font-size: 24px;
-				font-weight: bold;
+			.section-padding {
+				padding: 60px 0;
 			}
 			.hero-controls {
-				position: absolute;
-				top: 50%;
-				width: 100%;
-				display: flex;
-				justify-content: space-between;
-				padding: 0 40px;
-				transform: translateY(-50%);
-				pointer-events: none;
-				z-index: 10;
+				padding: 0 15px;
 			}
-			.nav-btn {
-				pointer-events: auto;
-				background: none;
-				border: none;
-				color: white;
-				width: 50px;
-				height: 50px;
-				cursor: pointer;
-				opacity: 0.7;
-				transition: opacity 0.3s;
-				display: flex;
-				align-items: center;
-				justify-content: center;
+			.hero-section h1 {
+				font-size: 42px;
 			}
-			.nav-btn svg {
-				width: 40px;
-				height: 40px;
+			.excellence-grid,
+			.machinery-grid,
+			.journey-grid {
+				grid-template-columns: 1fr !important;
+				gap: 40px !important;
 			}
-			.nav-btn:hover {
-				opacity: 1;
+			.services-grid {
+				grid-template-columns: 1fr 1fr;
+				gap: 20px;
+			}
+		}
+
+		/* ===== MOBILE (max 768px) ===== */
+		@media (max-width: 768px) {
+			/* --- Global --- */
+			.container {
+				padding: 0 16px !important;
+			}
+			.section-padding {
+				padding: 50px 0;
 			}
 
-			/* SS3: COLLECTION */
-			.section-title {
-				text-align: center;
-				margin-bottom: 60px;
-				font-size: 64px;
-				font-weight: 400;
+			/* --- Hero --- */
+			.hero-section h1 {
+				font-size: 32px !important;
+				line-height: 1.2 !important;
+				text-shadow: 0 2px 20px rgba(0,0,0,0.4);
 			}
-			.collection-wrapper {
-				width: 100%;
-				margin: 0 auto;
+			.hero-text {
+				max-width: 100% !important;
+				padding: 0 16px !important;
+			}
+			.hero-divider {
+				width: 80px;
+			}
+			.sub-heading {
+				font-size: 16px !important;
+				text-shadow: 0 1px 10px rgba(0,0,0,0.3);
+			}
+			.hero-bg img {
+				object-position: 80% center; /* Focus on the model/person on the right */
+			}
+			.hero-slide::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%);
+				z-index: 1;
+			}
+			.hero-inner {
+				z-index: 5;
 				position: relative;
-				padding-bottom: 80px;
+			}
+			.hero-section h1 {
+				font-size: 36px !important;
+				line-height: 1.1 !important;
+				color: var(--color-white) !important;
+				text-shadow: 2px 2px 15px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5) !important;
+				margin-bottom: 10px !important;
+			}
+			.sub-heading {
+				font-size: 18px !important;
+				color: var(--color-gold) !important;
+				text-shadow: 1px 1px 10px rgba(0,0,0,0.8) !important;
+				font-weight: 600 !important;
+			}
+			.hero-divider {
+				width: 60px;
+				background-color: var(--color-white) !important;
+				margin: 15px 0 !important;
+			}
+			.hero-controls {
+				display: none !important;
+			}
+
+			/* --- Collection Slider --- */
+			.section-title {
+				font-size: 32px !important;
+				margin-bottom: 30px !important;
 			}
 			.collection-track {
-				display: flex;
-				gap: 30px;
-				align-items: flex-start;
-				overflow-x: auto;
-				scroll-behavior: smooth;
-				-ms-overflow-style: none;
-				scrollbar-width: none;
-				padding: 0 50px;
-			}
-			.collection-track::-webkit-scrollbar {
-				display: none;
+				padding: 0 16px !important;
+				gap: 16px !important;
 			}
 			.collection-card {
-				width: 285px;
-				flex-shrink: 0;
+				width: 220px !important;
+				min-width: 220px !important;
 			}
 			.collection-card img {
-				width: 100%;
-				height: 420px;
-				object-fit: cover;
-				border-radius: 40px;
-				box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+				height: 300px !important;
+				border-radius: 24px !important;
 			}
-			/* Organic Wave Rhythm */
-			.card-1 {
-				margin-top: 20px;
+			.card-1, .card-2, .card-3, .card-4, .card-5 {
+				margin-top: 0 !important;
 			}
-			.card-2 {
-				margin-top: 150px;
-			}
-			.card-3 {
-				margin-top: 60px;
-			}
-			.card-4 {
-				margin-top: 120px;
-			}
-			.card-5 {
-				margin-top: 40px;
+			.collection-wrapper {
+				padding-bottom: 60px;
 			}
 			.slider-controls-v5 {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				gap: 30px;
-				position: absolute;
-				bottom: 0;
-				left: 50%;
-				transform: translateX(-50%);
-				width: 100%;
-			}
-			.progress-bar-v5 {
-				width: 100%;
-				max-width: 764px;
-				height: 4px;
-				background: #e0e0e0;
-				border-radius: 10px;
-				position: relative;
-			}
-			.progress-fill {
-				position: absolute;
-				left: 0;
-				top: 0;
-				height: 100%;
-				width: 5%;
-				background: var(--color-navy);
-				border-radius: 10px;
-				transition: width 0.2s ease;
+				gap: 15px;
+				padding: 0 16px;
 			}
 			.arrow-circ {
-				width: 45px;
-				height: 45px;
-				border: 1px solid #ddd;
-				border-radius: 50%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				background: none;
-				cursor: pointer;
-				color: var(--color-navy);
+				width: 36px;
+				height: 36px;
 			}
 
-			/* SS4: EXCELLENCE */
+			/* --- Excellence --- */
 			.excellence-grid {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 80px;
-				align-items: center;
-			}
-			.excellence-image {
-				position: relative;
-			}
-			.rounded-img {
-				border-radius: 40px;
-				width: 100%;
-			}
-			.exp-badge {
-				position: absolute;
-				bottom: -30px;
-				left: -30px;
-				background: white;
-				padding: 25px 40px;
-				border-radius: 20px;
-				display: flex;
-				gap: 20px;
-				align-items: center;
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-				z-index: 5;
-			}
-			.exp-badge .count {
-				font-size: 40px;
-				font-weight: bold;
-				font-family: var(--font-heading);
-				color: var(--color-maroon);
-			}
-			.exp-badge .label {
-				font-size: 12px;
-				font-weight: bold;
-				text-transform: uppercase;
-				line-height: 1.4;
-				color: var(--color-maroon);
+				text-align: center;
 			}
 			.excellence-content h2 {
-				font-size: 48px;
+				font-size: 32px !important;
 			}
 			.small-divider {
-				width: 80px;
-				margin: 20px 0;
+				margin: 20px auto !important;
 			}
-			.excellence-content h3 {
-				font-family: var(--font-body);
-				font-size: 24px;
-				font-weight: bold;
-				margin-bottom: 25px;
-			}
-			.body-p {
-				font-size: 16px;
-				line-height: 1.8;
-				opacity: 0.9;
+			.exp-badge {
+				left: 10px !important;
+				bottom: -20px !important;
+				padding: 15px 20px !important;
 			}
 
-			/* SS5: MACHINERY */
+			/* --- Machinery --- */
 			.machinery-grid {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 80px;
-				align-items: center;
+				text-align: center;
 			}
 			.machinery-content h2 {
-				font-size: 48px;
+				font-size: 32px !important;
 			}
-			.machinery-visual {
-				position: relative;
-				padding-bottom: 40px;
-			}
-			.v-dots {
-				display: flex;
-				gap: 10px;
-				margin-top: 20px;
-				justify-content: center;
-				width: 100%;
-			}
-			.v-dots span {
-				width: 8px;
-				height: 8px;
-				background: #ddd;
-				border-radius: 50%;
-			}
-			.v-dots span.active {
-				background: var(--color-navy);
+			.machinery-content .small-divider {
+				margin: 20px auto !important;
 			}
 
-			/* SS6: JOURNEY */
+			/* --- Journey --- */
 			.journey-grid {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 60px;
-				align-items: center;
-				padding: 100px 0;
-			}
-			.journey-text-content {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
+				padding: 40px 0 !important;
 				text-align: center;
 			}
 			.journey-heading {
-				font-size: 64px;
-				line-height: 1.1;
-				margin-bottom: 20px;
+				font-size: 36px !important;
 			}
 			.timeline-visual {
-				width: 100%;
-				position: relative;
-				margin: 40px 0;
-			}
-			.swoosh-container {
-				width: 100%;
-				max-width: 1000px;
-				margin: 0 auto;
-				overflow: hidden;
-			}
-			.swoosh-img {
-				width: 100%;
-				height: auto;
-				display: block;
-				filter: saturate(1.2);
-			}
-			.journey-btn {
-				padding: 18px 50px;
-				border-radius: 50px;
-				font-weight: 600;
-				font-size: 16px;
-				border: 1px solid #eee;
-				background: white;
-				color: var(--color-navy);
-				box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-			}
-
-			/* SS7: CALLOUT */
-			.callout-heading {
-				text-align: center;
-				margin-bottom: 60px;
-			}
-			.callout-heading h2 {
-				font-family: var(--font-body);
-				font-size: 48px;
-				font-weight: 500;
-				letter-spacing: -0.01em;
-			}
-			.highlight-maroon {
-				color: var(--color-maroon);
-				display: block;
-				margin-top: 15px;
-			}
-			.callout-divider {
-				width: 80px;
-				height: 5px;
-				background: var(--color-maroon);
-				margin: 15px auto 0;
-				border-radius: 10px;
-			}
-			.services-grid {
-				display: grid;
-				grid-template-columns: repeat(3, 1fr);
-				gap: 30px;
-			}
-			.service-card {
-				background: #f8f9fb;
-				padding: 50px 40px;
-				border-radius: 30px;
-				text-align: left;
-				transition: transform 0.3s;
-			}
-			.service-card:hover { transform: translateY(-5px); }
-			.card-icon {
-				margin-bottom: 25px;
-			}
-			.icon-img {
-				height: 50px;
-				width: auto;
-			}
-			.card-line {
-				width: 100%;
-				height: 1.5px;
-				background: var(--color-navy);
-				margin-bottom: 30px;
-				opacity: 0.8;
-			}
-			.card-title {
-				font-family: var(--font-body);
-				font-size: 24px;
-				font-weight: 500;
-				margin-bottom: 25px;
-				color: var(--color-navy);
-				line-height: 1.3;
-			}
-			.card-body {
-				font-family: var(--font-body);
-				font-size: 15px;
-				color: #888;
-				line-height: 1.6;
-				margin: 0;
-			}
-
-			/* SS8: FOOTER */
-			.footer-section {
-				padding: 80px 0;
-			}
-			.footer-flex {
-				display: grid;
-				grid-template-columns: 1.5fr 2fr 1.5fr 2fr;
-				gap: 40px;
-				align-items: start;
-			}
-			.logo-footer {
-				width: 180px;
-			}
-			.f-nav {
-				display: flex;
-				gap: 60px;
-			}
-			.f-nav-col {
-				display: flex;
-				flex-direction: column;
-				gap: 15px;
-			}
-			.f-nav a {
-				font-weight: 500;
-				font-size: 1rem;
-				color: white;
-			}
-			.f-socials {
-				display: flex;
-				gap: 12px;
-			}
-			.icon-circ {
-				width: 36px;
-				height: 36px;
-				border: 1px solid rgba(255, 255, 255, 0.3);
-				border-radius: 50%;
+				margin: 20px 0 !important;
+				min-height: 120px;
 				display: flex;
 				align-items: center;
+			}
+			.swoosh-container {
+				transform: scale(1.4); /* Make it more visible on mobile */
+			}
+			.journey-btn {
+				margin: 10px auto 0 !important;
+				display: inline-block;
+			}
+
+			/* --- Production Cards --- */
+			.callout-heading h2 {
+				font-size: 32px !important;
+				line-height: 1.3 !important;
+			}
+			.highlight-maroon {
+				display: inline-block; /* Reset for better flow */
+			}
+			.service-card {
+				text-align: center !important;
+			}
+			.card-icon {
+				display: flex;
 				justify-content: center;
-				font-size: 14px;
-				transition: all 0.3s;
+				margin-bottom: 20px !important;
 			}
-			.icon-circ:hover {
-				background: white;
+			.card-line {
+				margin: 0 auto 25px !important;
+				width: 60px !important; /* Shorter line for centered look */
 			}
-			.icon-circ:hover svg {
-				fill: var(--color-maroon);
+			.services-grid {
+				grid-template-columns: 1fr !important;
+				gap: 16px !important;
 			}
-			.f-address p {
-				font-size: 14px;
-				line-height: 1.8;
-				opacity: 0.9;
-				text-align: left;
+			.service-card {
+				padding: 30px 20px !important;
+				border-radius: 20px !important;
+				text-align: center;
 			}
-
-			/* ===== TABLET (max 1024px) ===== */
-			@media (max-width: 1024px) {
-				.container {
-					width: 100% !important;
-					max-width: 100% !important;
-					padding: 0 20px !important;
-				}
-				.section-padding {
-					padding: 60px 0;
-				}
-				.nav-links {
-					display: none !important;
-				}
-				.mobile-menu-toggle {
-					display: flex !important;
-				}
-				.hero-controls {
-					padding: 0 15px;
-				}
-				.hero-section h1 {
-					font-size: 42px;
-				}
-				.excellence-grid,
-				.machinery-grid,
-				.journey-grid {
-					grid-template-columns: 1fr !important;
-					gap: 40px !important;
-				}
-				.services-grid {
-					grid-template-columns: 1fr 1fr;
-					gap: 20px;
-				}
-				.footer-flex {
-					grid-template-columns: 1fr 1fr !important;
-					gap: 40px !important;
-				}
+			.card-title {
+				font-size: 20px !important;
 			}
+		}
 
-			/* ===== MOBILE (max 768px) ===== */
-			@media (max-width: 768px) {
-				/* --- Global --- */
-				.container {
-					padding: 0 16px !important;
-				}
-				.section-padding {
-					padding: 50px 0;
-				}
-
-				/* --- Hero --- */
-				.hero-section h1 {
-					font-size: 32px !important;
-					line-height: 1.2 !important;
-					text-shadow: 0 2px 20px rgba(0,0,0,0.4);
-				}
-				.hero-text {
-					max-width: 100% !important;
-					padding: 0 16px !important;
-				}
-				.hero-divider {
-					width: 80px;
-				}
-				.sub-heading {
-					font-size: 16px !important;
-					text-shadow: 0 1px 10px rgba(0,0,0,0.3);
-				}
-				.hero-bg img {
-					object-position: 80% center; /* Focus on the model/person on the right */
-				}
-				.hero-slide::after {
-					content: "";
-					position: absolute;
-					inset: 0;
-					background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%);
-					z-index: 1;
-				}
-				.hero-inner {
-					z-index: 5;
-					position: relative;
-				}
-				.hero-section h1 {
-					font-size: 36px !important;
-					line-height: 1.1 !important;
-					color: var(--color-white) !important;
-					text-shadow: 2px 2px 15px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5) !important;
-					margin-bottom: 10px !important;
-				}
-				.sub-heading {
-					font-size: 18px !important;
-					color: var(--color-gold) !important;
-					text-shadow: 1px 1px 10px rgba(0,0,0,0.8) !important;
-					font-weight: 600 !important;
-				}
-				.hero-divider {
-					width: 60px;
-					background-color: var(--color-white) !important;
-					margin: 15px 0 !important;
-				}
-				.hero-controls {
-					display: none !important;
-				}
-
-				/* --- Collection Slider --- */
-				.section-title {
-					font-size: 32px !important;
-					margin-bottom: 30px !important;
-				}
-				.collection-track {
-					padding: 0 16px !important;
-					gap: 16px !important;
-				}
-				.collection-card {
-					width: 220px !important;
-					min-width: 220px !important;
-				}
-				.collection-card img {
-					height: 300px !important;
-					border-radius: 24px !important;
-				}
-				.card-1, .card-2, .card-3, .card-4, .card-5 {
-					margin-top: 0 !important;
-				}
-				.collection-wrapper {
-					padding-bottom: 60px;
-				}
-				.slider-controls-v5 {
-					gap: 15px;
-					padding: 0 16px;
-				}
-				.arrow-circ {
-					width: 36px;
-					height: 36px;
-				}
-
-				/* --- Excellence --- */
-				.excellence-grid {
-					text-align: center;
-				}
-				.excellence-content h2 {
-					font-size: 32px !important;
-				}
-				.small-divider {
-					margin: 20px auto !important;
-				}
-				.exp-badge {
-					left: 10px !important;
-					bottom: -20px !important;
-					padding: 15px 20px !important;
-				}
-
-				/* --- Machinery --- */
-				.machinery-grid {
-					text-align: center;
-				}
-				.machinery-content h2 {
-					font-size: 32px !important;
-				}
-				.machinery-content .small-divider {
-					margin: 20px auto !important;
-				}
-
-				/* --- Journey --- */
-				.journey-grid {
-					padding: 40px 0 !important;
-					text-align: center;
-				}
-				.journey-heading {
-					font-size: 36px !important;
-				}
-				.timeline-visual {
-					margin: 20px 0 !important;
-					min-height: 120px;
-					display: flex;
-					align-items: center;
-				}
-				.swoosh-container {
-					transform: scale(1.4); /* Make it more visible on mobile */
-				}
-				.journey-btn {
-					margin: 10px auto 0 !important;
-					display: inline-block;
-				}
-
-				/* --- Production Cards --- */
-				.callout-heading h2 {
-					font-size: 32px !important;
-					line-height: 1.3 !important;
-				}
-				.highlight-maroon {
-					display: inline-block; /* Reset for better flow */
-				}
-				.service-card {
-					text-align: center !important;
-				}
-				.card-icon {
-					display: flex;
-					justify-content: center;
-					margin-bottom: 20px !important;
-				}
-				.card-line {
-					margin: 0 auto 25px !important;
-					width: 60px !important; /* Shorter line for centered look */
-				}
-				.services-grid {
-					grid-template-columns: 1fr !important;
-					gap: 16px !important;
-				}
-				.service-card {
-					padding: 30px 20px !important;
-					border-radius: 20px !important;
-					text-align: center;
-				}
-				.card-icon {
-					margin: 0 auto 20px !important;
-				}
-				.card-line {
-					margin: 0 auto 20px !important;
-				}
-				.card-title {
-					font-size: 20px !important;
-				}
-
-				/* --- Footer --- */
-				.footer-flex {
-					grid-template-columns: 1fr !important;
-					text-align: center;
-					gap: 30px !important;
-				}
-				.logo-footer {
-					margin: 0 auto;
-				}
-				.f-nav {
-					flex-direction: row;
-					justify-content: center;
-					gap: 40px;
-				}
-				.f-socials {
-					justify-content: center;
-				}
-				.f-address p {
-					text-align: center;
-				}
+		/* ===== SMALL MOBILE (max 480px) ===== */
+		@media (max-width: 480px) {
+			.hero-section h1 {
+				font-size: 28px !important;
 			}
-
-			/* ===== SMALL MOBILE (max 480px) ===== */
-			@media (max-width: 480px) {
-				.hero-section h1 {
-					font-size: 28px !important;
-				}
-				.brand-logo {
-					width: 120px;
-				}
-				.section-title {
-					font-size: 28px !important;
-				}
-				.collection-card {
-					width: 180px !important;
-					min-width: 180px !important;
-				}
-				.collection-card img {
-					height: 250px !important;
-				}
+			.section-title {
+				font-size: 28px !important;
 			}
-		</style>
-	</body>
-</html>
+			.collection-card {
+				width: 180px !important;
+				min-width: 180px !important;
+			}
+			.collection-card img {
+				height: 250px !important;
+			}
+		}
+	</style>
+</Layout>

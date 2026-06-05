@@ -1,0 +1,174 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const capabilities = [
+	{ title: "Basic Reactive Prints", desc: "Standard flatbed/rotary screen prints and Discharge prints." },
+	{ title: "Metallic Prints", desc: "Gold, Silver, Pearl, and Foil prints for a luxurious appearance." },
+	{ title: "Dimensional Prints", desc: "Rubber, Puff (Foaming), and Embossed prints for a tactile, 3D finish." },
+	{ title: "Glossy & Transparent", desc: "Gel, Gloss, and Crystal prints mimicking water or glass." },
+	{ title: "Specialty Reactive", desc: "Reactive Discharge, Pigment Reactive, and Gradient (ombre) prints." },
+	{ title: "Shimmer & Sparkle", desc: "Glitter, Shimmer, and Sequined prints." },
+	{ title: "Hybrid Prints", desc: "Combinations like Foil + Reactive or Rubber + Metallic." },
+	{ title: "Vintage & Distressed", desc: "Distressed and Stone-Wash prints for retro styles." },
+	{ title: "Cultural & Traditional", desc: "Intricate patterns like Kalamkari using reactive dyes." },
+	{ title: "Multi-Layer Prints", desc: "Multi-Color and Layered Metallic prints for depth." },
+	{ title: "Fabric-Specific Prints", desc: "Reactive Satin Print and Sheer Reactive Print." },
+	{ title: "Embellished Prints", desc: "Beaded and Mirror Work prints." },
+	{ title: "Custom Art Prints", desc: "Photo-realistic Digital Reactive and Hand-Painted Reactive prints." }
+];
+---
+
+<Layout title="Printing Services | USHA COTTON PRINTS">
+	<!-- Page Hero -->
+	<section class="page-hero bg-navy">
+		<div class="container">
+			<h1 class="text-white text-center">Excellence in Printing</h1>
+			<div class="divider-line divider-gold mx-auto"></div>
+			<p class="text-white text-center sub-heading">A Fusion of Digital & Reactive Technologies</p>
+		</div>
+	</section>
+
+	<!-- Tech Intro -->
+	<section class="section-padding bg-cream">
+		<div class="container excellence-grid">
+			<div class="excellence-image">
+				<img
+					src="/images/machinery-2.jpg"
+					alt="Printing Technology"
+					class="rounded-img"
+				/>
+			</div>
+			<div class="excellence-content">
+				<h2 class="text-maroon">Technological<br/><span class="text-navy">Excellence</span></h2>
+				<div class="divider-line divider-maroon small-divider"></div>
+				<p class="body-p">
+					Usha Cotton leads the industry by integrating sophisticated digital printing techniques with our established reactive printing methods. This technological fusion allows us to achieve greater precision, vibrant colour retention, and a broader variety of intricate designs.
+				</p>
+				<p class="body-p" style="margin-top: 15px; font-weight: 500; color: var(--color-navy);">
+					Furthermore, our advanced methods reduce dye and water usage by approximately 40%, aligning with our eco-friendly manufacturing principles.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Capabilities Grid -->
+	<section class="section-padding bg-white">
+		<div class="container">
+			<div class="callout-heading">
+				<h2 class="text-navy">Our Printing Capabilities</h2>
+				<div class="callout-divider"></div>
+				<p class="body-p" style="max-width: 800px; margin: 20px auto 0;">
+					We offer a comprehensive portfolio of reactive and digital printing techniques to meet diverse fashion and textile needs.
+				</p>
+			</div>
+			
+			<div class="capabilities-grid">
+				{capabilities.map((item, index) => (
+					<div class="cap-card">
+						<div class="cap-number">{(index + 1).toString().padStart(2, '0')}</div>
+						<h3 class="cap-title">{item.title}</h3>
+						<p class="cap-desc">{item.desc}</p>
+					</div>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<!-- Quality Control -->
+	<section class="section-padding bg-maroon text-white">
+		<div class="container text-center">
+			<h2 style="font-size: 48px; margin-bottom: 30px;">Rigorous Quality Control</h2>
+			<div class="divider-line divider-gold mx-auto"></div>
+			<p class="body-p" style="max-width: 900px; margin: 30px auto 0; font-size: 18px;">
+				Our printing processes are backed by stringent quality control at every stage. We conduct rigorous raw material testing (colour fastness, strength, texture), continuous in-process automated and manual inspections, and a meticulous final product review before shipment to guarantee unsurpassed quality.
+			</p>
+		</div>
+	</section>
+
+	<style>
+		.page-hero {
+			padding: 180px 0 100px;
+			position: relative;
+			background-color: var(--color-navy); /* Custom hero for printing */
+		}
+		.page-hero h1 {
+			font-size: 64px;
+			margin-bottom: 20px;
+		}
+		.mx-auto {
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.text-center { text-align: center; }
+
+		/* Capabilities Grid */
+		.capabilities-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			gap: 30px;
+			margin-top: 50px;
+		}
+		.cap-card {
+			background: #fdfdfd;
+			border: 1px solid #eaeaea;
+			border-radius: 20px;
+			padding: 40px 30px;
+			position: relative;
+			overflow: hidden;
+			transition: all 0.3s ease;
+		}
+		.cap-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+			border-color: rgba(156, 42, 77, 0.2); /* Maroon tint */
+		}
+		.cap-number {
+			font-family: var(--font-heading);
+			font-size: 60px;
+			color: rgba(26, 43, 73, 0.05); /* very light navy */
+			position: absolute;
+			top: -10px;
+			right: 20px;
+			line-height: 1;
+		}
+		.cap-title {
+			font-family: var(--font-body);
+			font-size: 22px;
+			color: var(--color-maroon);
+			margin-bottom: 15px;
+			position: relative;
+			z-index: 2;
+		}
+		.cap-desc {
+			font-family: var(--font-body);
+			font-size: 15px;
+			color: #666;
+			line-height: 1.6;
+			position: relative;
+			z-index: 2;
+		}
+
+		/* Re-use grids */
+		.excellence-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 80px;
+			align-items: center;
+		}
+		.rounded-img { border-radius: 40px; width: 100%; }
+		.small-divider { width: 80px; margin: 20px 0; }
+		.callout-heading { text-align: center; margin-bottom: 40px; }
+		.callout-heading h2 { font-size: 48px; }
+		.callout-divider { width: 80px; height: 5px; background: var(--color-maroon); margin: 15px auto 0; border-radius: 10px; }
+		
+		@media (max-width: 1024px) {
+			.excellence-grid { grid-template-columns: 1fr; gap: 40px; }
+			.capabilities-grid { grid-template-columns: repeat(2, 1fr); }
+		}
+		@media (max-width: 768px) {
+			.page-hero { padding: 140px 0 60px; }
+			.page-hero h1 { font-size: 36px; }
+			.capabilities-grid { grid-template-columns: 1fr; }
+		}
+	</style>
+</Layout>
