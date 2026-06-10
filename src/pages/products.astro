@@ -118,12 +118,15 @@ import Layout from "../layouts/Layout.astro";
 		/* Product Grid */
 		.product-grid {
 			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 80px;
+			grid-template-columns: 4fr 5fr;
+			gap: 60px;
 			align-items: center;
 		}
+		.product-grid.reverse {
+			grid-template-columns: 5fr 4fr;
+		}
 		.product-image { position: relative; }
-		.rounded-img { border-radius: 40px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+		.rounded-img { border-radius: 40px; width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: top center; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
 		
 		.product-content h2 { font-size: 56px; line-height: 1.1; }
 		.small-divider { width: 80px; margin: 25px 0; }
