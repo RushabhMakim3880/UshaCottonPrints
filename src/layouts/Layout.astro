@@ -34,6 +34,7 @@ const { title = "USHA COTTON LIMITED | Traditional Trust Since 1994" } = Astro.p
 					</a>
 				</div>
 				<nav class="nav-links">
+					<a href="/">Home</a>
 					<a href="/about">About us</a>
 					<a href="/printing">Printing</a>
 					<a href="/products">Products</a>
@@ -51,6 +52,7 @@ const { title = "USHA COTTON LIMITED | Traditional Trust Since 1994" } = Astro.p
 		<!-- Mobile Nav Overlay -->
 		<div class="mobile-nav-overlay" id="mobileNav">
 			<button class="mobile-nav-close" id="closeMenu">✕</button>
+			<a href="/">Home</a>
 			<a href="/about">About us</a>
 			<a href="/printing">Printing</a>
 			<a href="/products">Products</a>
@@ -72,10 +74,11 @@ const { title = "USHA COTTON LIMITED | Traditional Trust Since 1994" } = Astro.p
 					/>
 				</div>
 				<nav class="f-nav">
+					<a href="/">Home</a>
 					<a href="/about">About us</a>
 					<a href="/printing">Printing</a>
 					<a href="/products">Products</a>
-					<a href="#">Journey</a>
+					<a href="/contact">Contact</a>
 				</nav>
 				<div class="f-address">
 					<p>
@@ -145,12 +148,23 @@ const { title = "USHA COTTON LIMITED | Traditional Trust Since 1994" } = Astro.p
 				align-items: center;
 				width: 100%;
 			}
+			.logo-area {
+				flex: 1;
+				display: flex;
+				justify-content: flex-start;
+			}
+			.header-actions {
+				flex: 1;
+				display: flex;
+				justify-content: flex-end;
+			}
 			.brand-logo {
 				width: 160px;
 			}
 			.nav-links {
 				display: flex;
 				gap: 50px;
+				justify-content: center;
 			}
 			.nav-links a {
 				font-family: var(--font-body);
@@ -225,6 +239,7 @@ const { title = "USHA COTTON LIMITED | Traditional Trust Since 1994" } = Astro.p
 			}
 			.logo-footer {
 				width: 180px;
+				filter: brightness(0) invert(1);
 			}
 			.f-nav {
 				display: flex;
