@@ -39,3 +39,7 @@ swoosh.png
 *.ai
 *.pdf
 *.zip
+
+# Exception for policy PDFs
+!public/policies/*.pdf
+
